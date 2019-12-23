@@ -32,12 +32,16 @@ migrate = Migrate(app,db)
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
-Shows = db.Table('Shows',
-    db.Column('id',db.Integer,primary_key=True),
-    db.Column('artist_id',db.Integer,db.ForeignKey('Artist.id'),nullable=False),
-    db.Column('venue_id',db.Integer,db.ForeignKey('Venue.id'),nullable=False),
-    db.Column('start_time', db.TIMESTAMP, nullable=False)    
-)
+class Show(db.Model):
+  __tablename__ = 'Show'
+  artist_id = db.Column('artist_id',db.Integer,db.ForeignKey('Artist.id'),primary_key = True)
+  venue_id = db.Column('venue_id',db.Integer,db.ForeignKey('Venue.id'),primary_key = True)
+  start_time = db.Column('start_time', db.TIMESTAMP,primary_key = True)
+  venue = db.relationship("Venue",backref="Artist")
+  artist = db.relationship("Artist",backref="Venue")
+
+  def __repr__(self):
+    return f'<Artist id: {self.artist_id} , venue_id: {self.venue_id}, start time: {self.start_time}>'
 
 class Venue(db.Model):
     __tablename__ = 'Venue'
@@ -56,7 +60,10 @@ class Venue(db.Model):
     website =  db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
-    artists = db.relationship('Artist', secondary=Shows, backref= db.backref('Venue', lazy=True))
+    artist = db.relationship("Show",backref="Venue")
+
+    def __repr__(self):
+      return f'<id: {self.id}, name: {self.name}>'
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -74,7 +81,10 @@ class Artist(db.Model):
     website =  db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
+    venues = db.relationship("Show",backref="Artist")
 
+    def __repr__(self):
+      return f'<id: {self.id} , name: {self.name}>'
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
