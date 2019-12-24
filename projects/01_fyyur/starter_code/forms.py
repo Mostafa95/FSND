@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, URL,Regexp
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -83,10 +83,16 @@ class VenueForm(Form):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone'
+        'phone', validators=[Regexp(regex= '[0-9]*[0-9]*$', message=" Invalid Phone Number. Enter numbers only ")]
     )
     image_link = StringField(
         'image_link'
+    )
+    seeking_talent = StringField(
+        'name'
+    )
+    seeking_talent_des = StringField(
+        'name'
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
@@ -114,7 +120,7 @@ class VenueForm(Form):
         ]
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(message=" Invalid URL. Enter \" http://your_url \" ")]
     )
 
 class ArtistForm(Form):
@@ -182,10 +188,16 @@ class ArtistForm(Form):
     )
     phone = StringField(
         # TODO implement validation logic for state
-        'phone'
+        'phone', validators=[Regexp(regex= '[0-9]*[0-9]*$', message=" Invalid Phone Number. Enter numbers only ")]
     )
     image_link = StringField(
         'image_link'
+    )
+    seeking_talent = StringField(
+        'name'
+    )
+    seeking_talent_des = StringField(
+        'name'
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
@@ -214,7 +226,5 @@ class ArtistForm(Form):
     )
     facebook_link = StringField(
         # TODO implement enum restriction
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(message=" Invalid URL. Enter \" http://your_url \" ")]
     )
-
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

@@ -188,28 +188,37 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   err =0
-  try:
-    ven = Venue(name = request.form['name'],city=request.form['city'].upper(),state=request.form['state'],
-                address=request.form['address'],phone=request.form['phone'],genres=request.form.getlist('genres'),
-                facebook_link=request.form['facebook_link'] )
-    db.session.add(ven)
-    db.session.commit()
-  except:
-    db.session.rollback()
-    print(sys.exc_info())
-    err =1
-  finally:
-    db.session.close()
-    
-  # TODO: modify data to be the data object returned from db insertion
-  if err == 0:
-    name = db.session.query(Venue.name).filter_by(name=request.form['name']).order_by(db.desc(Venue.id)).first()[0]
-    # on successful db insert, flash success
-    flash('Venue ' + name + ' was successfully listed!')
+  ven = Venue(name = request.form['name'],city=request.form['city'].upper(),state=request.form['state'],
+              address=request.form['address'],phone=request.form['phone'],genres=request.form.getlist('genres'),
+              facebook_link=request.form['facebook_link'] )
+  form = VenueForm(obj = ven)
+  if form.validate() :
+    try:
+      db.session.add(ven)
+      db.session.commit()
+    except:
+      db.session.rollback()
+      print(sys.exc_info())
+      err =1
+    finally:
+      db.session.close()
+      
+    # TODO: modify data to be the data object returned from db insertion
+    if err == 0:
+      name = db.session.query(Venue.name).filter_by(name=request.form['name']).order_by(db.desc(Venue.id)).first()[0]
+      # on successful db insert, flash success
+      flash('Venue ' + name + ' was successfully listed!')
+    else:
+      # TODO: on unsuccessful db insert, flash an error instead.
+      flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
+    return render_template('pages/home.html')
   else:
-    # TODO: on unsuccessful db insert, flash an error instead.
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
-  return render_template('pages/home.html')
+    flash(form.errors)
+    if form.errors.__contains__('facebook_link'): flash(form.errors['facebook_link'][0])
+    if form.errors.__contains__('phone'): flash(form.errors['phone'][0])
+    return render_template('forms/new_venue.html', form=form)
+
+
 
 @app.route('/venues/delete/<int:venue_id>', methods=['GET','DELETE'])
 def delete_venue(venue_id):
@@ -299,7 +308,6 @@ def edit_artist(artist_id):
   artist = Artist.query.get(artist_id)
   # TODO: populate form with fields from artist with ID <artist_id>
   form = ArtistForm(obj = artist)
-  form.populate_obj(artist)
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
@@ -337,7 +345,6 @@ def edit_venue(venue_id):
   ven = Venue.query.get(venue_id)
   # TODO: populate form with fields from artist with ID <artist_id>
   form = VenueForm(obj = ven)
-  form.populate_obj(ven)
   
   # TODO: populate form with values from venue with ID <venue_id>
   return render_template('forms/edit_venue.html', form=form, venue=ven)
@@ -385,25 +392,32 @@ def create_artist_submission():
   art = Artist(name = request.form['name'],city=request.form['city'].upper(),state=request.form['state'],
               phone=request.form['phone'],genres=request.form.getlist('genres'),
               facebook_link=request.form['facebook_link'] )
-  try:
-    db.session.add(art)
-    db.session.commit()
-  except:
-    db.session.rollback()
-    print(sys.exc_info())
-    err =1
-  finally:
-    db.session.close()
-    
-  # TODO: modify data to be the data object returned from db insertion
-  if err == 0:
-    name = db.session.query(Artist.name).filter_by(name=request.form['name']).order_by(db.desc(Artist.id)).first()[0]
-    # on successful db insert, flash success
-    flash('Artist ' + name + ' was successfully listed!')
+  form = ArtistForm(obj = art)
+  if form.validate() :
+    try:
+      db.session.add(art)
+      db.session.commit()
+    except:
+      db.session.rollback()
+      print(sys.exc_info())
+      err =1
+    finally:
+      db.session.close()
+      
+    # TODO: modify data to be the data object returned from db insertion
+    if err == 0:
+      name = db.session.query(Artist.name).filter_by(name=request.form['name']).order_by(db.desc(Artist.id)).first()[0]
+      # on successful db insert, flash success
+      flash('Artist ' + name + ' was successfully listed!')
+    else:
+      # TODO: on unsuccessful db insert, flash an error instead.
+      flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.')
+    return render_template('pages/home.html')
+  
   else:
-    # TODO: on unsuccessful db insert, flash an error instead.
-    flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.')
-  return render_template('pages/home.html')
+    if form.errors.__contains__('facebook_link'): flash(form.errors['facebook_link'][0])
+    if form.errors.__contains__('phone'): flash(form.errors['phone'][0])
+    return render_template('forms/new_artist.html', form=form)
 
 
 #  Shows
