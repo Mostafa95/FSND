@@ -60,28 +60,28 @@ def upgrade():
 
      ## Populate Artist ##
     op.execute("insert into \"Artist\"(name,city,state,phone,image_link,facebook_link,genres,website,seeking_venue,seeking_description)\
-                values('Guns N Petals','San Francisco','NY','326-123-5000','https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80',\
+                values('Guns N Petals','SAN FRANCISCO','NY','326-123-5000','https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80',\
                         'https://www.facebook.com/GunsNPetals',\'{\"Rock n Roll\"}\','https://www.gunsnpetalsband.com',True,'Looking for shows to perform at in the San Francisco Bay Area!');")
 
     op.execute("Insert into \"Artist\"(name,city,state,phone,image_link,facebook_link,genres,website,seeking_venue,seeking_description)\
-                values('Matt Quevedo','New York','NY','300-400-5000','https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',\
+                values('Matt Quevedo','NEW YORK','NY','300-400-5000','https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',\
                         'https://www.facebook.com/mattquevedo923251523',\'{\"Jazz\"}\','',False,'');")
 
     op.execute("Insert into \"Artist\"(name,city,state,phone,image_link,facebook_link,genres,website,seeking_venue,seeking_description)\
-                values('The Wild Sax Band','San Francisco','CA','432-325-5432','https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80',\
+                values('The Wild Sax Band','SAN FRANCISCO','CA','432-325-5432','https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80',\
                         '',\'{\"Jazz\",\"Classical\"}\','',False,'');")
 
     ## Populate Venue ##
     op.execute("insert into \"Venue\"(name,city,state,Address,phone,image_link,facebook_link,genres,website,seeking_talent,seeking_description)\
-                values('The Musical Hop','San Francisco','CA','1015 Folsom Street','123-123-1234','https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',\
+                values('The Musical Hop','SAN FRANCISCO','CA','1015 Folsom Street','123-123-1234','https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',\
                         'https://www.facebook.com/TheMusicalHop',\'{\"Jazz\",\"Reggae\",\"Swing\",\"Classical\",\"Folk\"}\','https://www.themusicalhop.com',True,'We are on the lookout for a local artist to play every two weeks. Please call us.');")
 
     op.execute("insert into \"Venue\"(name,city,state,Address,phone,image_link,facebook_link,genres,website,seeking_talent,seeking_description)\
-                values('The Dueling Pianos Bar','New York','NY','335 Delancey Street','914-003-1132','https://images.unsplash.com/photo-1497032205916-ac775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80',\
+                values('The Dueling Pianos Bar','NEW YORK','NY','335 Delancey Street','914-003-1132','https://images.unsplash.com/photo-1497032205916-ac775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80',\
                         'https://www.facebook.com/theduelingpianos',\'{\"R&B\",\"Hip-Hop\",\"Classical\"}\','https://www.theduelingpianos.com',False,'');")
 
     op.execute("insert into \"Venue\"(name,city,state,Address,phone,image_link,facebook_link,genres,website,seeking_talent,seeking_description)\
-                values('Park Square Live Music & Coffee','San Francisco','CA','34 Whiskey Moore Ave','415-000-1234','https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80',\
+                values('Park Square Live Music & Coffee','SAN FRANCISCO','CA','34 Whiskey Moore Ave','415-000-1234','https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80',\
                         'https://www.facebook.com/ParkSquareLiveMusicAndCoffee',\'{\"Rock n Roll\",\"Jazz\",\"Classical\",\"Folk\"}\','https://www.parksquarelivemusicandcoffee.com',False,'');")
     
     ## Populate Shows ##

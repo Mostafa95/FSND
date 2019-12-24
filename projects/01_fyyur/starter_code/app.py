@@ -189,7 +189,7 @@ def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   err =0
   try:
-    ven = Venue(name = request.form['name'],city=request.form['city'],state=request.form['state'],
+    ven = Venue(name = request.form['name'],city=request.form['city'].upper(),state=request.form['state'],
                 address=request.form['address'],phone=request.form['phone'],genres=request.form.getlist('genres'),
                 facebook_link=request.form['facebook_link'] )
     db.session.add(ven)
@@ -211,13 +211,14 @@ def create_venue_submission():
     flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
   return render_template('pages/home.html')
 
-@app.route('/venues/<venue_id>', methods=['DELETE'])
+@app.route('/venues/delete/<int:venue_id>', methods=['GET','DELETE'])
 def delete_venue(venue_id):
 
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+  err=0
   try:
-    db.session.query(Show).filter_by(venue_id=id).delete()
+    db.session.query(Show).filter_by(venue_id=venue_id).delete()
     db.session.query(Venue).filter_by(id=venue_id).delete()
     db.session.commit()
   except:
@@ -228,12 +229,13 @@ def delete_venue(venue_id):
     db.session.close()
   
   if err == 0:
-    flush('Venue Deleted Successfully')
+    flash("Venue Deleted Successfully")
   else:
-    flush('Error!! Could not delete Venue')
+    flash("Error!! Could not delete Venue")
+
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+  return render_template('pages/home.html')
 
 #  Artists
 #  ----------------------------------------------------------------
@@ -380,7 +382,7 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   err =0
-  art = Artist(name = request.form['name'],city=request.form['city'],state=request.form['state'],
+  art = Artist(name = request.form['name'],city=request.form['city'].upper(),state=request.form['state'],
               phone=request.form['phone'],genres=request.form.getlist('genres'),
               facebook_link=request.form['facebook_link'] )
   try:
@@ -437,7 +439,7 @@ def create_shows():
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
-  sh = Show(artist_id=request.form['artist_id'],venue_id=request.form['artist_id'],
+  sh = Show(artist_id=request.form['artist_id'],venue_id=request.form['venue_id'],
             start_time=request.form['start_time'])
   err=0
   try:
@@ -471,8 +473,7 @@ def getNumUpcomingShows(id, idType='ven', get_data=0):
   if idType=='ven':
     shows = db.session.query(Show.start_time,Show.artist_id).filter_by(venue_id = id).all()
   elif idType=='art':
-    shows = db.session.query(Show.start_time,Show.artist_id).filter_by(artist_id = id).all()
-  
+    shows = db.session.query(Show.start_time,Show.venue_id).filter_by(artist_id = id).all()
   num = 0
   cur = datetime.today()
   info = []
@@ -504,7 +505,7 @@ def getNumPastShows(id, idType='ven', get_data=0):
   if idType=='ven':
     shows = db.session.query(Show.start_time,Show.artist_id).filter_by(venue_id = id).all()
   elif idType=='art':
-    shows = db.session.query(Show.start_time,Show.artist_id).filter_by(artist_id = id).all()
+    shows = db.session.query(Show.start_time,Show.venue_id).filter_by(artist_id = id).all()
   num = 0
   cur = datetime.today()
   info = []
