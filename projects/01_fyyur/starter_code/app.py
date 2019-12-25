@@ -188,9 +188,16 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   err =0
+
+  if "seeking_talent" in request.form.keys():
+    f = True
+  else:
+    f = False
+
   ven = Venue(name = request.form['name'],city=request.form['city'].upper(),state=request.form['state'],
               address=request.form['address'],phone=request.form['phone'],genres=request.form.getlist('genres'),
-              facebook_link=request.form['facebook_link'] )
+              facebook_link=request.form['facebook_link'],image_link=request.form['image_link'],
+              website=request.form['website'],seeking_talent=f,seeking_description=request.form['seeking_talent_description'] )
   form = VenueForm(obj = ven)
   if form.validate() :
     try:
@@ -213,8 +220,8 @@ def create_venue_submission():
       flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
     return render_template('pages/home.html')
   else:
-    flash(form.errors)
     if form.errors.__contains__('facebook_link'): flash(form.errors['facebook_link'][0])
+    if form.errors.__contains__('website'): flash(form.errors['website'][0])
     if form.errors.__contains__('phone'): flash(form.errors['phone'][0])
     return render_template('forms/new_venue.html', form=form)
 
@@ -232,7 +239,7 @@ def delete_venue(venue_id):
     db.session.commit()
   except:
     db.session.rollback()
-    print(sys.exec_info())
+    print(sys.exc_info())
     err = 1
   finally:
     db.session.close()
@@ -315,30 +322,44 @@ def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
   err = 0
+  if "seeking_venue" in request.form.keys():
+    f = True
+  else:
+    f = False
   dict = {
     "name":request.form['name'],
     "city":request.form['city'],
     "state":request.form['state'],
     "phone":request.form['phone'],
     "genres":request.form.getlist('genres'),
-    "facebook_link":request.form['facebook_link'] }
-  try:
-    db.session.query(Artist).filter_by(id=artist_id).update(dict)
-    db.session.commit()
-  except:
-    db.session.rollback()
-    print(sys.exec_info())
-    err = 1
-  finally:
-    db.session.close()
-  
-  if err == 0:
-    flash("Updated Successfully")
-  else:
-    flash("Error!! Not Updated")
+    "facebook_link":request.form['facebook_link'],
+    "image_link":request.form['image_link'],
+    "website":request.form['website'],
+    "seeking_venue":f,
+    "seeking_description":request.form['seeking_venue_description'] }
+  form = ArtistForm(obj=request.form)
+  if form.validate():
+    try:
+      db.session.query(Artist).filter_by(id=artist_id).update(dict)
+      db.session.commit()
+    except:
+      db.session.rollback()
+      print(sys.exc_info())
+      err = 1
+    finally:
+      db.session.close()
+    
+    if err == 0:
+      flash("Updated Successfully")
+    else:
+      flash("Error!! Not Updated")
               
-  
-  return redirect(url_for('show_artist', artist_id=artist_id))
+    return redirect(url_for('show_artist', artist_id=artist_id))
+  else:
+    if form.errors.__contains__('facebook_link'): flash(form.errors['facebook_link'][0])
+    if form.errors.__contains__('website'): flash(form.errors['website'][0])
+    if form.errors.__contains__('phone'): flash(form.errors['phone'][0])
+    return render_template('forms/new_artist.html', form=form)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
@@ -354,30 +375,47 @@ def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
   err = 0
+  
+  if "seeking_talent" in request.form.keys():
+    f = True
+  else:
+    f = False
   dict = {
     "name":request.form['name'],
     "city":request.form['city'],
     "state":request.form['state'],
     "phone":request.form['phone'],
     "genres":request.form.getlist('genres'),
-    "facebook_link":request.form['facebook_link'] }
-  try:
-    db.session.query(Venue).filter_by(id=venue_id).update(dict)
-    db.session.commit()
-  except:
-    db.session.rollback()
-    print(sys.exec_info())
-    err = 1
-  finally:
-    db.session.close()
-  
-  if err == 0:
-    flash("Updated Successfully")
+    "facebook_link":request.form['facebook_link'],
+    "address":request.form['address'],
+    "image_link":request.form['image_link'],
+    "website":request.form['website'],
+    "seeking_talent":f,
+    "seeking_description":request.form['seeking_talent_description']
+    } 
+  form = VenueForm(obj=request.form)
+  if form.validate() :
+    try:
+      db.session.query(Venue).filter_by(id=venue_id).update(dict)
+      db.session.commit()
+    except:
+      db.session.rollback()
+      print(sys.exc_info())
+      err = 1
+    finally:
+      db.session.close()
+    
+    if err == 0:
+      flash("Updated Successfully")
+    else:
+      flash("Error!! Not Updated")
+
+    return redirect(url_for('show_venue', venue_id=venue_id))
   else:
-    flash("Error!! Not Updated")
-
-  return redirect(url_for('show_venue', venue_id=venue_id))
-
+    if form.errors.__contains__('facebook_link'): flash(form.errors['facebook_link'][0])
+    if form.errors.__contains__('website'): flash(form.errors['website'][0])
+    if form.errors.__contains__('phone'): flash(form.errors['phone'][0])
+    return render_template('forms/new_venue.html', form=form)
 #  Create Artist
 #  ----------------------------------------------------------------
 
@@ -389,9 +427,15 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   err =0
+  if "seeking_venue" in request.form.keys():
+    f = True
+  else:
+    f = False
+
   art = Artist(name = request.form['name'],city=request.form['city'].upper(),state=request.form['state'],
               phone=request.form['phone'],genres=request.form.getlist('genres'),
-              facebook_link=request.form['facebook_link'] )
+              facebook_link=request.form['facebook_link'],image_link=request.form['image_link'],
+              seeking_venue=f,seeking_description=request.form['seeking_venue_description'] )
   form = ArtistForm(obj = art)
   if form.validate() :
     try:
@@ -416,6 +460,7 @@ def create_artist_submission():
   
   else:
     if form.errors.__contains__('facebook_link'): flash(form.errors['facebook_link'][0])
+    if form.errors.__contains__('website'): flash(form.errors['website'][0])
     if form.errors.__contains__('phone'): flash(form.errors['phone'][0])
     return render_template('forms/new_artist.html', form=form)
 
