@@ -85,7 +85,7 @@ class VenueForm(Form):
     phone = StringField(
         'phone', validators=[Regexp(regex= '[0-9]*[0-9]*$', message=" Invalid Phone Number. Enter numbers only ")]
     )
-    image_link = FileField()
+    image_link = StringField( 'image_link' )
     seeking_talent = BooleanField(default='checked' )
     seeking_talent_description = TextAreaField()
     
@@ -186,8 +186,8 @@ class ArtistForm(Form):
     phone = StringField(
         'phone', validators=[DataRequired(),Regexp(regex= '[0-9]*[0-9]*$', message=" Invalid Phone Number. Enter numbers only ")]
     )
-    image_link = FileField()
-    seeking_venue = BooleanField(default='checked' )
+    image_link =  StringField( 'image_link' )
+    seeking_venue = BooleanField(default='checked')
     seeking_venue_description = TextAreaField()
     
     genres = SelectMultipleField(
