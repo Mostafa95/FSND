@@ -80,61 +80,101 @@ def create_app(test_config=None):
     except:
       abort(422)
   '''
-  @TODO: 
-  Create an endpoint to POST a new question, 
-  which will require the question and answer text, 
-  category, and difficulty score.
-
   TEST: When you submit a question on the "Add" tab, 
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
-  '''
-  @app.route('/questions',methods=['POST'])
-  def create_question():
-    body = request.get_json()
-    print(body)
-    try:
-      question = Question(question=body['question'],answer=body['answer'],
-                        category=body['category'],difficulty=body['difficulty'])
-      print(question.format())
-      question.insert()
-      return jsonify({
-        'success':True
-      })
-    except:
-      abort(422)
-  '''
-  @TODO: 
-  Create a POST endpoint to get questions based on a search term. 
-  It should return any questions for whom the search term 
-  is a substring of the question. 
 
   TEST: Search by any phrase. The questions list will update to include 
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
+  @app.route('/questions',methods=['POST'])
+  def create_question():
+    body = request.get_json()
+    
+    if 'searchTerm' in body:
+      term = body['searchTerm']
+      questions = Question.query.filter(Question.question.ilike('%'+ term +'%')).all()
+      questions = [ques.format() for ques in questions]
+      print(questions)    
+      return jsonify({
+        'questions':questions,
+        'totalQuestions':len(questions),
+        'currentCategory':""
+      })
 
+
+    else:
+      try:
+        question = Question(question=body['question'],answer=body['answer'],
+                          category=body['category'],difficulty=body['difficulty'])
+        question.insert()
+        return jsonify({
+          'success':True
+        })
+      except:
+        abort(422)
   '''
-  @TODO: 
-  Create a GET endpoint to get questions based on category. 
-
   TEST: In the "List" tab / main screen, clicking on one of the 
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
+  @app.route('/categories/<int:id>/questions')
+  def get_by_category(id):
+    category = Category.query.get(id)
+    
+    if category == None:
+      abort (404)
+
+    questions = Question.query.filter_by(category=id).all()
+    
+    category = category.format()['type']
+    questions = [q.format() for q in questions]
+    return jsonify({
+      'questions':questions,
+      'totalQuestions':len(questions),
+      'currentCategory':category
+    })
 
 
   '''
-  @TODO: 
-  Create a POST endpoint to get questions to play the quiz. 
-  This endpoint should take category and previous question parameters 
-  and return a random questions within the given category, 
-  if provided, and that is not one of the previous questions. 
-
   TEST: In the "Play" tab, after a user selects "All" or a category,
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/quizzes',methods=['POST'])
+  def quiz():
+    body = request.get_json()
+    prev_ques = body['previousQuestions']
+    category = body['quizCategory']
+    result = Question(None,None,None,None)
+    
+    try:
+      if 'id' in category:
+        cur_ques = Question.query.filter_by(category = category['id']).all()
+      else:
+        cur_ques = Question.query.all()
+    except:
+      abort(404)
+
+    for cur_id in cur_ques:
+      used = 0
+      for prev_id in prev_ques:
+        if prev_id['id'] == str(cur_id.format()['id']):
+          used = 1
+          break
+      if used == 0:
+        result = cur_id
+        break
+      
+    if result.question == None:
+      result = ''
+    else:
+      result = result.format()
+      
+    return jsonify({
+      'question':result
+    })
 
   @app.errorhandler(404)
   def not_found(error):
@@ -151,6 +191,14 @@ def create_app(test_config=None):
       'error':422,
       'messege':"Unprocessable request"
     }),422
+
+  @app.errorhandler(400)
+  def Bad_request(error):
+    return jsonify({
+      'success':False,
+      'error':400,
+      'messege':"Bad request"
+    }),400
   return app
 
     
