@@ -250,10 +250,10 @@ e.g.
   }, 
   "success": true
 }
+```
 
 
-
-## Testing
+## Testing  
 To run the tests, run
 ```
 dropdb trivia_test
