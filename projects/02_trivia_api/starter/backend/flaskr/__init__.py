@@ -22,6 +22,9 @@ def create_app(test_config=None):
 
   @app.route('/categories',methods=['GET'])
   def get_categories():
+    '''
+    This endpoint is responsible for returning all categories from DB
+    '''    
     cats = Category.query.all()
     cats_format = [cat.format() for cat in cats]
     
@@ -38,6 +41,9 @@ def create_app(test_config=None):
 
   @app.route('/questions',methods=['GET'])
   def get_questions():
+    '''
+    This endpoint gets all questions from DB, paginate them and return requested page
+    '''
     page = request.args.get('page',1,type=int)
 
     ques = Question.query.all()
@@ -69,6 +75,9 @@ def create_app(test_config=None):
 
   @app.route('/questions/<int:id>',methods=['DELETE'])
   def delete_question(id):
+    '''
+    This endpoint delete question given its ID
+    '''
     try:
       ques = Question.query.filter_by(id=id).one_or_none()
       ques.delete()
@@ -81,13 +90,18 @@ def create_app(test_config=None):
 
   @app.route('/questions',methods=['POST'])
   def createAndsearch_question():
+    '''
+    This endpoint has 2 functionalities:
+      1- search for questions given a searchTerm
+      2- create new question
+    It decides based on keywords in the request. 
+    '''
     body = request.get_json()
     
     if 'searchTerm' in body:
       term = body['searchTerm']
       questions = Question.query.filter(Question.question.ilike('%'+ term +'%')).all()
-      questions = [ques.format() for ques in questions]
-      print(questions)    
+      questions = [ques.format() for ques in questions]    
       return jsonify({
         'success':True,
         'questions':questions,
@@ -110,6 +124,10 @@ def create_app(test_config=None):
 
   @app.route('/categories/<int:id>/questions')
   def get_by_category(id):
+    '''
+    This endpoint gets all questions with a given category
+    '''
+
     category = Category.query.get(id)
     if category == None:
       abort (404)
@@ -131,12 +149,17 @@ def create_app(test_config=None):
 
   @app.route('/quizzes',methods=['POST'])
   def quiz():
+    '''
+    This endpoint return a random question within a given category. every question is only 
+    returned once.
+
+    '''
     body = request.get_json()
     prev_ques = body['previous_questions']
     category = body['quiz_category']
     result = Question(None,None,None,None)
     
-    print(category)
+    # If category ALL is selected
     if category['type'] == 'click':
       cur_ques = Question.query.all()
 
@@ -146,6 +169,7 @@ def create_app(test_config=None):
         abort (404)
       cur_ques = Question.query.filter_by(category = category['id']).all()
     
+    # select a question not in previous_questions list
     for cur_id in cur_ques:
       used = 0
       for prev_id in prev_ques:

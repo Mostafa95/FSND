@@ -14,7 +14,7 @@ class TriviaTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name="trivia"
+        self.database_name="trivia_test"
         self.user_name = "postgres"
         self.password = "postgres"
         self.database_path = "postgres://{}:{}@{}/{}".format(self.user_name,self.password,'localhost:5432', self.database_name)
@@ -64,13 +64,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(body['success'],False)
 
 
-    # def test_delete_question(self):
-    #     res = self.client().delete('/questions/26')
-    #     body = json.loads(res.data)
-    #     ques = Question.query.filter_by(id=26).one_or_none()
-    #     self.assertEqual(res.status_code,200)
-    #     self.assertEqual(body['success'],True)
-    #     self.assertEqual(ques,None)
+    def test_delete_question(self):
+        res = self.client().delete('/questions/26')
+        body = json.loads(res.data)
+        ques = Question.query.filter_by(id=26).one_or_none()
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(body['success'],True)
+        self.assertEqual(ques,None)
 
 
     def test_422_wrong_ID_delete_question(self):

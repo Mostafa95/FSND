@@ -68,26 +68,189 @@ One note before you delve into your tasks: for each endpoint you are expected to
 
 REVIEW_COMMENT
 ```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+GET '/questions'
+GET '/categories/<int:id>/questions'
+POST '/questions'
+POST '/quizzes'
+DELETE '/questions/<int:id>'
+
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+- Returns: JSON response containing:
+    ='success':response status(True or False)
+    ='categories': dictionary conating key-value pairs
 
-```
+e.g.  
+{"categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "success": true
+}
+
+
+GET '/questions'
+- Fetch a dictionary of questions where keys are attributes of questions table, and values are their corresponding values
+- Request Arguments: page number
+- Returns : JSON response containing following keys:
+    ='success': response status(True or False)
+    ='questions': list of dictionary of paginated questions
+    ='total_questions': number of all questions in DB
+    ='current_category': category of returned questions 
+    ='categories': list of dictionaries containing all categories
+
+e.g.
+{"categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "current_category": "", 
+  "questions": [
+    {
+      "answer": "Maya Angelou", 
+      "category": 4, 
+      "difficulty": 2, 
+      "id": 5, 
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    }, 
+    {
+      "answer": "Muhammad Ali", 
+      "category": 4, 
+      "difficulty": 1, 
+      "id": 9, 
+      "question": "What boxer's original name is Cassius Clay?"
+    }, 
+    {
+      "answer": "Apollo 13", 
+      "category": 5, 
+      "difficulty": 4, 
+      "id": 2, 
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    }, 
+    ...
+  ], 
+  "success": true, 
+  "total_questions": 22
+}
+
+
+POST '/questions'
+- This endpoint has 2 functionalities:
+    1- Create question and insert it into DB
+        Request arguments: 'question','answer','category','difficulty'
+        Returns : JSON response constaining status of request:
+            ='success': response status(True or False)
+        
+        e.g.
+        {'success':true}
+
+    2- Search for a given keyword in all questions
+        Request arguments: 'searchTerm'
+        Returns: JSON response containing following keys:
+            ='success':response status(True or False)
+            ='questions':list of dictionaries of questions containing keyword
+            ='totalQuestions': number of all questions in DB
+            ='currentCategory':category of returned questions 
+        
+        e.g.
+        {"currentCategory": "", 
+        "questions": [
+            {
+            "answer": "Maya Angelou", 
+            "category": 4, 
+            "difficulty": 2, 
+            "id": 5, 
+            "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+            }
+        ], 
+        "success": true, 
+        "totalQuestions": 1
+        }
+
+
+
+DELETE '/questions/<int:id>'
+- Delete a question with given ID
+- Request Arguments: Queestion ID
+- Returns : JSON response constaining status of request:
+    ='success': response status(True or False)
+
+e.g.
+{'success':true}
+
+
+GET '/categories/<int:id>/questions'
+- Fetch a dictionary of questions with given category ID.
+- Request Arguments: Category ID
+- Returns: JSON response containing following:
+    ='success':response status(True or False)
+    ='questions':list of dictionaries of questions with category ID
+    ='totalQuestions':number of all questions in DB
+    ='currentCategory':category of returned questions 
+
+e.g.
+{"currentCategory": {
+    "1": "Science"
+  }, 
+  "questions": [
+    {
+      "answer": "The Liver", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 20, 
+      "question": "What is the heaviest organ in the human body?"
+    }, 
+    {
+      "answer": "Alexander Fleming", 
+      "category": 1, 
+      "difficulty": 3, 
+      "id": 21, 
+      "question": "Who discovered penicillin?"
+    }, 
+    {
+      "answer": "Blood", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 22, 
+      "question": "Hematology is a branch of medicine involving the study of what?"
+    }
+  ], 
+  "success": true, 
+  "totalQuestions": 3
+}
+
+
+POST '/quizzes'
+- Fetches a question based on a given category. Unique question will always be returned, meaning a question will never be returned twice. It usees a list of previous questions for reference.
+- Request Arguments: 'previous_questions','quiz_category'
+- Returns: JSON response containing following:
+    ='success':response status(True or False)
+    ='question':question selected based on category.
+
+e.g.
+{
+  "question": {
+    "answer": "Maya Angelou", 
+    "category": 4, 
+    "difficulty": 2, 
+    "id": 5, 
+    "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+  }, 
+  "success": true
+}
+
 
 
 ## Testing
