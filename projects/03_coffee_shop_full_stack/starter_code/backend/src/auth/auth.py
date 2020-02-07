@@ -24,20 +24,20 @@ def get_token_auth_header():
         }, 401)
 
     header = request.headers['Authorization']
-    header-parts = header.split(' ')
-    if len(header-parts) != 2:
+    header_parts = header.split(' ')
+    if len(header_parts) != 2:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization header must ONLY be bearer token.'
         }, 401)
 
-    if header-parts[0].lower() != 'bearer':
+    if header_parts[0].lower() != 'bearer':
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization header must start with "Bearer".'
         }, 401)
 
-    return header-parts[1]
+    return header_parts[1]
 
 
 def check_permissions(permission, payload):
@@ -51,25 +51,14 @@ def check_permissions(permission, payload):
         raise AuthError({
             'code': 'unauthorized',
             'description': 'Permission not found.'
-        }, 403)
+        }, 401)
     return True
 
 
-'''
-    !!NOTE urlopen has a common certificate errordescribed here:
-    https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
-'''
-
-
 def verify_decode_jwt(token):
-    # GET THE PUBLIC KEY FROM AUTH0
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
-    print(jwks)
-    # GET THE DATA IN THE HEADER
     unverified_header = jwt.get_unverified_header(token)
-    print(unverified_header)
-    # CHOOSE OUR KEY
     rsa_key = {}
     if 'kid' not in unverified_header:
         raise AuthError({
@@ -98,7 +87,6 @@ def verify_decode_jwt(token):
                 audience=API_AUDIENCE,
                 issuer='https://' + AUTH0_DOMAIN + '/'
             )
-            print(payload)
             return payload
 
         except jwt.ExpiredSignatureError:
