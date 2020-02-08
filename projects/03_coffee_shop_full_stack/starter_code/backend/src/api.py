@@ -81,7 +81,7 @@ def update_drink(payload, id):
     if 'title' in body:
         drink.title = body['title']
     if 'recipe' in body:
-        drink.recipe = body['recipe']
+        drink.recipe = str(body['recipe'])
     drink.update()
 
     return jsonify({
